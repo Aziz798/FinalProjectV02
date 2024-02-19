@@ -16,6 +16,7 @@ namespace FinalProjectV02.Server.Controllers
     public class CompanyController(AppDbContext db) : ControllerBase
     {
         private readonly AppDbContext _db = db;
+         
 
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Company>>> GetAllCompanies()
@@ -73,19 +74,23 @@ namespace FinalProjectV02.Server.Controllers
             }
             return BadRequest(ModelState);
         }
-
-            private string GenerateJwtToken(int userId)
+        private string GenerateJwtToken(int userId)
         {
-            var tokenHandler = new JwtSecurityTokenHandler();
-            var key = Encoding.ASCII.GetBytes("YourSecretKey");
-            var tokenDescriptor = new SecurityTokenDescriptor
-            {
-                Subject = new ClaimsIdentity([new Claim("id", userId.ToString())]),
-                Expires = DateTime.UtcNow.AddDays(7),
-                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
-            };
-            var token = tokenHandler.CreateToken(tokenDescriptor);
-            return tokenHandler.WriteToken(token);
-        }
+        var tokenHandler = new JwtSecurityTokenHandler();
+
+        
+        var key = Encoding.ASCII.GetBytes("adahfijvdsop4652316865412345@sdnsdkclkcsdn");
+
+        var tokenDescriptor = new SecurityTokenDescriptor
+        {
+            Subject = new ClaimsIdentity(new[] { new Claim("id", userId.ToString()) }),
+            Expires = DateTime.UtcNow.AddDays(7),
+            SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
+        };
+
+        var token = tokenHandler.CreateToken(tokenDescriptor);
+        return tokenHandler.WriteToken(token);
     }
+
+}
 }

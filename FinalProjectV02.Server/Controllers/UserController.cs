@@ -71,11 +71,18 @@ public class UserController : ControllerBase
         }
         return BadRequest(ModelState);
     }
+    [HttpGet("all")]
+    public async Task<ActionResult<IEnumerable<User>>> GetAllUsers()
+    {
+        var users = await _db.Users.ToListAsync();
+        return Ok(users);
+    }
+
 
     private string GenerateJwtToken(int userId)
     {
         var tokenHandler = new JwtSecurityTokenHandler();
-        var key = Encoding.ASCII.GetBytes("YourSecretKey");
+        var key = Encoding.ASCII.GetBytes("adahfijvdsop4652316865412345@sdnsdkclkcsdn");
         var tokenDescriptor = new SecurityTokenDescriptor
         {
             Subject = new ClaimsIdentity([new Claim("id", userId.ToString())]),
