@@ -1,13 +1,13 @@
-﻿using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using System.Text;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using FinalProjectV02.Server.Data;
-using Microsoft.IdentityModel.Tokens;
+﻿using FinalProjectV02.Server.Data;
 using FinalProjectV02.Server.Models.Entities;
 using FinalProjectV02.Server.Models.LoginModels;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
 
 namespace FinalProjectV02.Server.Controllers;
 
@@ -23,7 +23,7 @@ public class UserController : ControllerBase
     }
 
     [HttpPost("register")]
-    public async Task<ActionResult<string>> Registration([FromBody]User user)
+    public async Task<ActionResult<string>> Registration([FromBody] User user)
     {
         if (ModelState.IsValid)
         {
@@ -48,7 +48,7 @@ public class UserController : ControllerBase
         }
     }
     [HttpPost("login")]
-    public async Task<ActionResult<string>> Login([FromForm]LoginModel loginUser)
+    public async Task<ActionResult<string>> Login([FromForm] LoginModel loginUser)
     {
         if (ModelState.IsValid)
         {
@@ -74,8 +74,41 @@ public class UserController : ControllerBase
     [HttpGet("all")]
     public async Task<ActionResult<IEnumerable<User>>> GetAllUsers()
     {
-        var users = await _db.Users.ToListAsync();
-        return Ok(users);
+        return Ok(await _db.Users.ToListAsync());
+    }
+    [HttpPut("{id}")]
+    public async Task<ActionResult<User>> UpdateUser([FromBody] User user, [FromHeader] int id)
+    {
+        var userFromDb = await _db.Users.SingleOrDefaultAsync(u => u.UserId == id);
+        if (userFromDb == null)
+        {
+            return NotFound();
+        }
+        if (ModelState.IsValid)
+        {
+            userFromDb.FirstName = user.FirstName;
+            userFromDb.LastName = user.LastName;
+            userFromDb.UserEmail = user.UserEmail;
+            userFromDb.UserPassword = user.UserPassword;
+            userFromDb.CompanyId = user.CompanyId;
+            userFromDb.RoleId = user.RoleId;
+            userFromDb.UpdatedAt = DateTime.Now;
+            await _db.SaveChangesAsync();
+            return Ok(userFromDb);
+        }
+        return BadRequest(ModelState);
+    }
+    [HttpDelete("{id}")]
+    public async Task<ActionResult> DeleteUser([FromHeader] int id)
+    {
+        var userFromDb = await _db.Users.SingleOrDefaultAsync(u => u.UserId == id);
+        if (userFromDb == null)
+        {
+            return NotFound();
+        }
+        _db.Users.Remove(userFromDb);
+        await _db.SaveChangesAsync();
+        return Ok();
     }
 
 
