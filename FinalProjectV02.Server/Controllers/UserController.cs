@@ -1,6 +1,7 @@
 ﻿using FinalProjectV02.Server.Data;
 using FinalProjectV02.Server.Models.Entities;
 using FinalProjectV02.Server.Models.LoginModels;
+using FinalProjectV02.Server.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -16,25 +17,37 @@ namespace FinalProjectV02.Server.Controllers;
 public class UserController : ControllerBase
 {
     private readonly AppDbContext _db;
-
-    public UserController(AppDbContext db)
+    private readonly IManageFiles _iManageFiles;
+    public UserController(AppDbContext db, IManageFiles iManageFiles)
     {
         _db = db;
+        _iManageFiles = iManageFiles;
     }
 
     [HttpPost("register")]
-    public async Task<ActionResult<string>> Registration([FromBody] User user)
+    public async Task<ActionResult<string>> Registration(RegisterUser user)
     {
+        User registratedUser = new();
         if (ModelState.IsValid)
         {
             var existingUser = await _db.Users.FirstOrDefaultAsync(u => u.UserEmail == user.UserEmail);
             if (existingUser == null)
             {
+                string pathOfCompanyLogo = await _iManageFiles.UploadFile(user.UserPhoto);
+                registratedUser.FirstName = user.FirstName;
+                registratedUser.LastName = user.LastName;
+                registratedUser.UserEmail = user.UserEmail;
+                registratedUser.UserRole = user.UserRole;
+                registratedUser.UserPassword = user.UserPassword;
+                registratedUser.ConfirmPassword = user.ConfirmPassword;
+                registratedUser.CompanyId = user.CompanyId;
+                registratedUser.RoleId = user.RoleId;
+                registratedUser.UserPhoto = pathOfCompanyLogo;
                 PasswordHasher<User> Hasher = new();
-                user.UserPassword = Hasher.HashPassword(user, user.UserPassword);
-                await _db.Users.AddAsync(user);
+                user.UserPassword = Hasher.HashPassword(registratedUser, user.UserPassword);
+                await _db.Users.AddAsync(registratedUser);
                 await _db.SaveChangesAsync();
-                var token = GenerateJwtToken(user.UserId);
+                var token = GenerateJwtToken(registratedUser.UserId);
                 return Ok(new { Token = token });
             }
             else
