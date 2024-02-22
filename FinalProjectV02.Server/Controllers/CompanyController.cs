@@ -1,6 +1,7 @@
 ﻿using FinalProjectV02.Server.Data;
 using FinalProjectV02.Server.Models.Entities;
 using FinalProjectV02.Server.Models.LoginModels;
+using FinalProjectV02.Server.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -13,26 +14,34 @@ namespace FinalProjectV02.Server.Controllers
 {
     [Route("api/company")]
     [ApiController]
-    public class CompanyController(AppDbContext db, ILogger<CompanyController> logger) : ControllerBase
+    public class CompanyController(AppDbContext db, ILogger<CompanyController> logger,IManageFiles iManageFiles) : ControllerBase
     {
         private readonly ILogger<CompanyController> _logger = logger;
         private readonly AppDbContext _db = db;
+        private readonly IManageFiles _iManageFiles=iManageFiles;
         
    
-        [HttpPost("register"),DisableRequestSizeLimit]
-        public async Task<ActionResult<string>> RegisterAsCompany([FromBody] Company company)
+        [HttpPost("register")]
+        public async Task<ActionResult<string>> RegisterAsCompany(RegisterCompany company)
         {
+            Company companyToGetIntoTheDb = new();
             if (ModelState.IsValid)
             {
                 var existingUser = await _db.Companies.FirstOrDefaultAsync(u => u.CompanyEmail == company.CompanyEmail);
                 if (existingUser == null)
                 {
-
+                    string pathOfCompanyLogo = await _iManageFiles.UploadFile(company.LogoImg);
+                    companyToGetIntoTheDb.CompanyName = company.CompanyName;
+                    companyToGetIntoTheDb.CompanyEmail = company.CompanyEmail;
+                    companyToGetIntoTheDb.CompanyType = company.CompanyType;
+                    companyToGetIntoTheDb.CompanyPassword = company.CompanyPassword;
+                    companyToGetIntoTheDb.CompanyConfirmPassword = company.CompanyConfirmPassword;
+                    companyToGetIntoTheDb.CompanyLogo = pathOfCompanyLogo;
                     PasswordHasher<Company> Hasher = new();
-                    company.CompanyPassword = Hasher.HashPassword(company, company.CompanyPassword);
-                    await _db.Companies.AddAsync(company);
+                    company.CompanyPassword = Hasher.HashPassword(companyToGetIntoTheDb, company.CompanyPassword);
+                    await _db.Companies.AddAsync(companyToGetIntoTheDb);
                     await _db.SaveChangesAsync();
-                    var token = GenerateJwtToken(company.CompanyId);
+                    var token = GenerateJwtToken(companyToGetIntoTheDb.CompanyId);
                     return Ok(new { Token = token });
                 }
                 return BadRequest("Company with this email already exists.");
@@ -61,6 +70,13 @@ namespace FinalProjectV02.Server.Controllers
                 return Ok(new { Token = token });
             }
             return BadRequest(ModelState);
+        }
+        [HttpPost("add/role")]
+        public async Task<ActionResult> ddaza([FromBody] Role role)
+        {
+            await _db.Roles.AddAsync(role);
+            await _db.SaveChangesAsync();
+            return Ok(role);
         }
         private string GenerateJwtToken(int userId)
         {

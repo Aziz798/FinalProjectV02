@@ -18,9 +18,8 @@ public class Company
     public string CompanyType { get; set; }
     [Required]
     public string CompanyLogo { get; set; }
-    [NotMapped]
-    [Required]
-    public IFormFile LogoImg { get; set; }
+
+
     [Required(ErrorMessage = "Password is Required")]
     [MinLength(8, ErrorMessage = "Password must be at least 8 characters")]
     

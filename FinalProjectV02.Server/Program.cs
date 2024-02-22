@@ -1,5 +1,6 @@
 // Added using statements
 using FinalProjectV02.Server.Data;
+using FinalProjectV02.Server.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.EntityFrameworkCore;
@@ -7,8 +8,15 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
+builder.Services.AddTransient<IManageFiles, ManageFile>();
 // Added connection string
-builder.Services.AddControllers();
+builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.PropertyNameCaseInsensitive = true; // Make property names case insensitive
+        options.JsonSerializerOptions.PropertyNamingPolicy = null; // Keep property names as they are in JSON
+    });
+
 // Add cors
 builder.Services.AddCors(options =>
 {
@@ -19,12 +27,7 @@ builder.Services.AddCors(options =>
         }
     );
 });
-builder.Services.Configure<FormOptions>(o =>
-{
-    o.ValueLengthLimit = int.MaxValue;
-    o.MultipartBodyLengthLimit = int.MaxValue;
-    o.MemoryBufferThreshold = int.MaxValue;
-});
+
 
 // Add JWT authentication
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
