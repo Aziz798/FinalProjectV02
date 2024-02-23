@@ -38,11 +38,11 @@ namespace FinalProjectV02.Server.Controllers
                     companyToGetIntoTheDb.CompanyConfirmPassword = company.CompanyConfirmPassword;
                     companyToGetIntoTheDb.CompanyLogo = pathOfCompanyLogo;
                     PasswordHasher<Company> Hasher = new();
-                    company.CompanyPassword = Hasher.HashPassword(companyToGetIntoTheDb, company.CompanyPassword);
+                    companyToGetIntoTheDb.CompanyPassword = Hasher.HashPassword(companyToGetIntoTheDb, company.CompanyPassword);
                     await _db.Companies.AddAsync(companyToGetIntoTheDb);
                     await _db.SaveChangesAsync();
                     var token = GenerateJwtToken(companyToGetIntoTheDb.CompanyId);
-                    return Ok(new { Token = token });
+                    return Ok(new { Token = token,Company=companyToGetIntoTheDb });
                 }
                 return BadRequest("Company with this email already exists.");
 
@@ -67,7 +67,7 @@ namespace FinalProjectV02.Server.Controllers
                     return BadRequest("Password is wrong");
                 }
                 var token = GenerateJwtToken(companyFromDb.CompanyId);
-                return Ok(new { Token = token });
+                return Ok(new { Token = token,Company=companyFromDb });
             }
             return BadRequest(ModelState);
         }

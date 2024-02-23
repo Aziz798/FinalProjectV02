@@ -44,11 +44,11 @@ public class UserController : ControllerBase
                 registratedUser.RoleId = user.RoleId;
                 registratedUser.UserPhoto = pathOfCompanyLogo;
                 PasswordHasher<User> Hasher = new();
-                user.UserPassword = Hasher.HashPassword(registratedUser, user.UserPassword);
+                registratedUser.UserPassword = Hasher.HashPassword(registratedUser, user.UserPassword);
                 await _db.Users.AddAsync(registratedUser);
                 await _db.SaveChangesAsync();
                 var token = GenerateJwtToken(registratedUser.UserId);
-                return Ok(new { Token = token });
+                return Ok(new { Token = token ,User=registratedUser});
             }
             else
             {
@@ -79,7 +79,7 @@ public class UserController : ControllerBase
                     return BadRequest("Password is wrong");
                 }
                 var token = GenerateJwtToken(userFromDb.UserId);
-                return Ok(new { Token = token });
+                return Ok(new { Token = token,User=userFromDb });
             }
         }
         return BadRequest(ModelState);
