@@ -18,9 +18,6 @@ public class User
 
     public string LastName { get; set; }
 
-    [Required(ErrorMessage = "User Role is required")]
-    public string UserRole { get; set; }
-
     [Required(ErrorMessage = "User Email is required")]
     [EmailAddress(ErrorMessage = "Invalid email address")]
     public string UserEmail { get; set; }

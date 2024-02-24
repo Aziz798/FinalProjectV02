@@ -78,6 +78,11 @@ namespace FinalProjectV02.Server.Controllers
             await _db.SaveChangesAsync();
             return Ok(role);
         }
+        [HttpGet("all")]
+        public async Task<ActionResult<IEnumerable<Company>>> GetAllCompanies()
+        {
+            return await _db.Companies.ToListAsync();
+        }
         private string GenerateJwtToken(int userId)
         {
             var tokenHandler = new JwtSecurityTokenHandler();

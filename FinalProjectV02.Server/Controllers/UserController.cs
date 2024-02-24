@@ -37,7 +37,6 @@ public class UserController : ControllerBase
                 registratedUser.FirstName = user.FirstName;
                 registratedUser.LastName = user.LastName;
                 registratedUser.UserEmail = user.UserEmail;
-                registratedUser.UserRole = user.UserRole;
                 registratedUser.UserPassword = user.UserPassword;
                 registratedUser.ConfirmPassword = user.ConfirmPassword;
                 registratedUser.CompanyId = user.CompanyId;
@@ -48,7 +47,7 @@ public class UserController : ControllerBase
                 await _db.Users.AddAsync(registratedUser);
                 await _db.SaveChangesAsync();
                 var token = GenerateJwtToken(registratedUser.UserId);
-                return Ok(new { Token = token ,User=registratedUser});
+                return Ok(new { Token = token, User = registratedUser });
             }
             else
             {
@@ -79,7 +78,7 @@ public class UserController : ControllerBase
                     return BadRequest("Password is wrong");
                 }
                 var token = GenerateJwtToken(userFromDb.UserId);
-                return Ok(new { Token = token,User=userFromDb });
+                return Ok(new { Token = token, User = userFromDb });
             }
         }
         return BadRequest(ModelState);
@@ -122,6 +121,17 @@ public class UserController : ControllerBase
         _db.Users.Remove(userFromDb);
         await _db.SaveChangesAsync();
         return Ok();
+    }
+    [HttpGet("roles")]
+    public async Task<ActionResult<IEnumerable<Role>>> GetAllRoles()
+    {
+        return await _db.Roles.ToListAsync();
+    }
+    [HttpGet("{id}")]
+    public async Task<ActionResult<User>> GetOneUser( int id)
+    {
+        User user= await _db.Users.Include(u=>u.Company).FirstOrDefaultAsync(u=>u.UserId == id);
+        return Ok(user);
     }
 
 

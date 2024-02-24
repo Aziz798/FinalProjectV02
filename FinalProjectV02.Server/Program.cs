@@ -2,22 +2,25 @@
 using FinalProjectV02.Server.Data;
 using FinalProjectV02.Server.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Http.Features;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
+
+// Configure services
 builder.Services.AddTransient<IManageFiles, ManageFile>();
-// Added connection string
+
+// Configure JSON serialization options
 builder.Services.AddControllers()
     .AddJsonOptions(options =>
     {
         options.JsonSerializerOptions.PropertyNameCaseInsensitive = true; // Make property names case insensitive
-        options.JsonSerializerOptions.PropertyNamingPolicy = null; // Keep property names as they are in JSON
+        options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.Preserve; // Handle object cycles
     });
 
-// Add cors
+// Configure CORS
 builder.Services.AddCors(options =>
 {
     options.AddDefaultPolicy(
@@ -28,8 +31,7 @@ builder.Services.AddCors(options =>
     );
 });
 
-
-// Add JWT authentication
+// Configure JWT authentication
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
@@ -45,25 +47,24 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         };
     });
 
-// Add SQLServer connection
+// Configure SQLServer connection
 builder.Services.AddDbContext<AppDbContext>(options =>
 {
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
 });
 
 var app = builder.Build();
-// Configure the HTTP request pipeline.
+
+// Configure the HTTP request pipeline
 if (app.Environment.IsDevelopment())
 {
-    // Add this
     app.UseDeveloperExceptionPage();
 }
 
 app.UseHttpsRedirection();
-// Add JWT authentication middleware
-app.UseAuthentication();
+app.UseAuthentication(); // Use JWT authentication middleware
 app.UseAuthorization();
-// Add CORS middleware
-app.UseCors();
+app.UseCors(); // Use CORS middleware
 app.MapControllers();
+
 app.Run();
