@@ -4,6 +4,7 @@ import LogRegCompany from "./views/LogRegCompany";
 import { useState } from "react";
 import LogRegUser from "./views/LogRegUser";
 import UserNavbar from "./components/UserNavbar";
+import Tache from "./views/Tache";
 
 export default function App() {
     const [color, setColor] = useState("dark")
@@ -15,6 +16,7 @@ export default function App() {
             <Routes data-theme="dark">
                 <Route path="/register/login/company" element={<LogRegCompany setToken={setToken}/>} />
                 <Route path="/register/login/user" element={<LogRegUser setToken={setToken}/>}/>
+                <Route path="/tasks/project/{projectId}" element={<Tache/>}/>
             </Routes>
         </div>
     )

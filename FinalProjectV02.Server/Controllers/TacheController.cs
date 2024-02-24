@@ -23,18 +23,18 @@ public class TacheController(AppDbContext db) : ControllerBase
         return BadRequest(ModelState);
     }
     [HttpGet("{userId}/{projectId}")]
-    public async Task<ActionResult<IEnumerable<Tache>>> GetTachesOfOneUserInOneProject([FromHeader] int userId, [FromHeader]int projectId)
+    public async Task<ActionResult<IEnumerable<Tache>>> GetTachesOfOneUserInOneProject([FromHeader] int userId, [FromHeader] int projectId)
     {
-        List <Tache> taches = await _db.Taches.Include(t=>t.Status).Include(t=>t.Project).Where(t => t.TacheUserId == userId && t.ProjectId == projectId).ToListAsync();
+        List<Tache> taches = await _db.Taches.Include(t => t.Status).Include(t => t.Project).Where(t => t.TacheUserId == userId && t.ProjectId == projectId).ToListAsync();
         return Ok(taches);
     }
     [HttpPatch("{tacheId}")]
     public async Task<ActionResult<Tache>> ChangeStatusOfTache([FromHeader] int tacheId, [FromBody] Tache tachUpdated)
     {
-        Tache tache =await _db.Taches.FirstOrDefaultAsync(t=>t.TaskId == tacheId);
-        if (ModelState.IsValid) 
+        Tache tache = await _db.Taches.FirstOrDefaultAsync(t => t.TaskId == tacheId);
+        if (ModelState.IsValid)
         {
-            tache.TaskDescription =tache.TaskDescription;
+            tache.TaskDescription = tache.TaskDescription;
             tache.StatusId = tachUpdated.StatusId;
             tache.UpdatedAt = DateTime.Now;
             _db.SaveChangesAsync();
@@ -42,6 +42,24 @@ public class TacheController(AppDbContext db) : ControllerBase
         }
         return BadRequest();
     }
+
+    [HttpGet("status")]
+    public async Task<ActionResult<IEnumerable<Status>>> GetAllStatus()
+    {
+        List<Status> statuses = await _db.Statuses.ToListAsync();
+        return Ok(statuses);
+    }
+
+    [HttpPost("status")]
+    public async Task<ActionResult<Status>> CreateStatus(Status status)
+    {
+        await _db.Statuses.AddAsync(status);
+        await _db.SaveChangesAsync();
+        return Ok(status);
+    }
+
+
+
     [HttpDelete("{tacheId}")]
     public async Task<ActionResult> DeleteTask([FromHeader] int tacheId)
     {
