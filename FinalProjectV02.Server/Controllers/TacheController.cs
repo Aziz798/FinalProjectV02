@@ -25,7 +25,7 @@ public class TacheController(AppDbContext db) : ControllerBase
     [HttpGet("{userId}/{projectId}")]
     public async Task<ActionResult<IEnumerable<Tache>>> GetTachesOfOneUserInOneProject([FromHeader] int userId, [FromHeader] int projectId)
     {
-        List<Tache> taches = await _db.Taches.Include(t => t.Status).Include(t => t.Project).Where(t => t.TacheUserId == userId && t.ProjectId == projectId).ToListAsync();
+        List<Tache> taches = await _db.Taches.Include(t => t.Status).Include(t => t.Project).Where(t => t.UserId == userId && t.ProjectId == projectId).ToListAsync();
         return Ok(taches);
     }
     [HttpPatch("{tacheId}")]
@@ -63,10 +63,15 @@ public class TacheController(AppDbContext db) : ControllerBase
     [HttpDelete("{tacheId}")]
     public async Task<ActionResult> DeleteTask([FromHeader] int tacheId)
     {
-        Tache tache =await _db.Taches.FirstOrDefaultAsync(t=>t.TaskId==tacheId);
+        Tache tache = await _db.Taches.FirstOrDefaultAsync(t => t.TaskId == tacheId);
         _db.Taches.Remove(tache);
         await _db.SaveChangesAsync();
         return Ok();
+    }
+    [HttpGet]
+    public async Task<ActionResult<IEnumerable<Tache>>> getAllTaches()
+    {
+        return await _db.Taches.Include(t => t.User).Include(t => t.Project).Include(t => t.Status).ToListAsync();
     }
 
 }

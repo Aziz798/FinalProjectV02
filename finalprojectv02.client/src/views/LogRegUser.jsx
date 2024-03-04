@@ -1,5 +1,5 @@
-import LoginUser from "../components/LoginUser"
-import RegisterUser from "../components/RegisterUser"
+import LoginUser from "../components/LogRegUser/LoginUser"
+import RegisterUser from "../components/LogRegUser/RegisterUser"
 
 
 const LogRegUser = ({setToken}) => {

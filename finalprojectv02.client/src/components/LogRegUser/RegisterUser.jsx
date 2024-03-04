@@ -14,16 +14,7 @@ const RegisterUser = ({ setToken }) => {
         CompanyId: null,
         RoleId: null,
     });
-    const [validationErrors, setValidationErrors] = useState({
-        FirstName: null,
-        LastName: null,
-        UserEmail: "",
-        UserPassword: "",
-        UserPhoto: null,
-        ConfirmPassword: null,
-        CompanyId: null,
-        RoleId: null,
-    });
+    const [validationErrors, setValidationErrors] = useState(null);
 
     const [roles, setRoles] = useState(null);
     const [companies, setCompanies] = useState(null);
@@ -48,8 +39,8 @@ const RegisterUser = ({ setToken }) => {
             try {
                 const rolesFromDb = await axios.get("http://localhost:5292/api/user/roles");
                 const companiesFromDb = await axios.get("http://localhost:5292/api/company/all");
-                setRoles(rolesFromDb.data);
-                setCompanies(companiesFromDb.data);
+                setRoles(rolesFromDb.data.$values);
+                setCompanies(companiesFromDb.data.$values);
             } catch (error) {
                 console.log(error);
             }
@@ -71,8 +62,8 @@ const RegisterUser = ({ setToken }) => {
             formData.append('UserRole', registerUser.UserRole);
 
             const response = await axios.post("http://localhost:5292/api/user/register", formData);
-            localStorage.setItem("userId", response.data.User.UserId);
-            localStorage.setItem("Token", response.data.Token);
+            localStorage.setItem("userId", response.data.user.userId);
+            localStorage.setItem("Token", response.data.token);
             setToken("user");
             setRegisterUser({
                 FirstName: "",
@@ -85,29 +76,23 @@ const RegisterUser = ({ setToken }) => {
                 CompanyId: null,
                 RoleId: null,
             });
-            setValidationErrors({
-                FirstName: null,
-                LastName: null,
-                UserRole: null,
-                UserEmail: "",
-                UserPassword: "",
-                UserPhoto: null,
-                ConfirmPassword: null,
-                CompanyId: null,
-                RoleId: null,
-            });
-            nav("/homepage/user");
+            setValidationErrors(null);
+            nav("/user/dashboard");
         } catch (error) {
-            setValidationErrors(error.response.data.Errors);
+            if (error.response.data.errors) {
+                setValidationErrors(error.response.data.errors);
+            } else {
+                setValidationErrors(error.response.data)
+            }
         }
     }
     return (
         <div className="space-y-4">
             <form onSubmit={formHandler} className="flex flex-col space-y-4 items-center">
                 <h1 className="text-3xl">Regiter as Employee</h1>
-                {validationErrors.FirstName && (
+                {validationErrors && (validationErrors.FirstName && (
                     validationErrors.FirstName.map((err, key) => <li key={key} className="text-red-800">{err}</li>)
-                )}
+                ))}
                 <label className="input input-bordered flex items-center gap-2">
                     <input
                         type="text"
@@ -117,9 +102,9 @@ const RegisterUser = ({ setToken }) => {
                         placeholder="First Name"
                     />
                 </label>
-                {validationErrors.LastName && (
+                {validationErrors && (validationErrors.LastName && (
                     validationErrors.LastName.map((err, key) => <li key={key} className="text-red-800">{err}</li>)
-                )}
+                ))}
                 <label className="input input-bordered flex items-center gap-2">
                     <input
                         type="text"
@@ -129,7 +114,7 @@ const RegisterUser = ({ setToken }) => {
                         placeholder="Last Name"
                     />
                 </label>
-                {validationErrors.UserEmail && (
+                {validationErrors && validationErrors.UserEmail && (
                     validationErrors.UserEmail.map((err, key) => <li key={key} className="text-red-800">{err}</li>)
                 )}
                 <label className="input input-bordered flex items-center gap-2">
@@ -141,31 +126,31 @@ const RegisterUser = ({ setToken }) => {
                         placeholder="Email"
                     />
                 </label>
-                {validationErrors.CompanyId && (
+                {validationErrors && validationErrors.CompanyId && (
                     validationErrors.CompanyId.map((err, key) => <li key={key} className="text-red-800">{err}</li>)
                 )}
                 <label className="input input-bordered flex items-center gap-2">
                     <select name="CompanyId" value={registerUser.CompanyId} onChange={handleChange} className="select select-bordered w-full max-w-xs">
                         <option disabled selected>Company that you work for</option>
                         {companies && companies.map(com => {
-                            return <option key={com.CompanyId} value={com.CompanyId}>{com.CompanyName}</option>
+                            return <option key={com.companyId} value={com.companyId}>{com.companyName}</option>
                         })}
                     </select>
                 </label>
-                {validationErrors.RoleId && (
+                {validationErrors && (validationErrors.RoleId && (
                     validationErrors.RoleId.map((err, key) => <li key={key} className="text-red-800">{err}</li>)
-                )}
+                ))}
                 <label className="input input-bordered flex items-center gap-2">
                     <select name="RoleId" value={registerUser.RoleId} onChange={handleChange} className="select select-bordered w-full max-w-xs">
                         <option disabled selected>Your role in the company</option>
                         {roles && roles.map(role => {
-                            return <option key={role.RoleId} value={role.RoleId}>{role.RoleName}</option>
+                            return <option key={role.RoleId} value={role.roleId}>{role.roleName}</option>
                         })}
                     </select>
                 </label>
-                {validationErrors.UserPhoto && (
+                {validationErrors && (validationErrors.UserPhoto && (
                     validationErrors.UserPhoto.map((err, key) => <li key={key} className="text-red-800">{err}</li>)
-                )}
+                ))}
                 <label className="form-control w-full max-w-xs">
                     <div className="label">
                         <span className="label-text">Pick a photo</span>
@@ -176,9 +161,9 @@ const RegisterUser = ({ setToken }) => {
                         className="file-input file-input-bordered w-full max-w-xs"
                     />
                 </label>
-                {validationErrors.UserPassword && (
+                {validationErrors && (validationErrors.UserPassword && (
                     validationErrors.UserPassword.map((err, key) => <li key={key} className="text-red-800">{err}</li>)
-                )}
+                ))}
                 <label className="input input-bordered flex items-center gap-2">
                     <input
                         type="password"
@@ -188,9 +173,9 @@ const RegisterUser = ({ setToken }) => {
                         placeholder="Enter password here"
                     />
                 </label>
-                {validationErrors.ConfirmPassword && (
+                {validationErrors && (validationErrors.ConfirmPassword && (
                     validationErrors.ConfirmPassword.map((err, key) => <li key={key} className="text-red-800">{err}</li>)
-                )}
+                ))}
                 <label className="input input-bordered flex items-center gap-2">
                     <input
                         type="password"

@@ -8,6 +8,10 @@ public class User
 {
     [Key]
     public int UserId { get; set; }
+    [Required(ErrorMessage = "Role is required")]
+    public int RoleId { get; set; }
+    [Required(ErrorMessage = "Company is required")]
+    public int CompanyId { get; set; }
 
     [Required(ErrorMessage = "First Name is required")]
     [MinLength(3, ErrorMessage = "First Name must be at least 3 characters ")]
@@ -33,20 +37,17 @@ public class User
     [Required]
     public string UserPhoto { get; set; }
 
-    [Required(ErrorMessage = "Company ID is required")]
-    public int CompanyId { get; set; }
-    public int RoleId { get; set; }
-
 
     public DateTime CreatedAt { get; set; } = DateTime.Now;
     public DateTime UpdatedAt { get; set; } = DateTime.Now;
 
     public Company? Company { get; set; }
     public Role? Role { get; set; }
+    public Project? Project { get; set; }
     public List<Tache> Taches { get; set; } = new List<Tache>();
     public List<Message> Messages { get; set; } = new List<Message>();
     public List<UsersInProject> UserInprojects { get; set; } = new List<UsersInProject>();
-    public Project? Projects { get; set; }
+    
 
 
 }

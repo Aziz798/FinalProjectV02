@@ -1,6 +1,6 @@
 import React from 'react';
-import RegistraionCompany from '../components/RegistraionCompany';
-import LoginCompany from '../components/LoginCompany';
+import RegistraionCompany from '../components/LogRegCompany/RegistraionCompany';
+import LoginCompany from '../components/LogRegCompany/LoginCompany';
 
 const LogRegCompany = ({ setToken }) => {
   return (

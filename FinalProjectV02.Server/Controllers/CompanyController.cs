@@ -14,13 +14,13 @@ namespace FinalProjectV02.Server.Controllers
 {
     [Route("api/company")]
     [ApiController]
-    public class CompanyController(AppDbContext db, ILogger<CompanyController> logger,IManageFiles iManageFiles) : ControllerBase
+    public class CompanyController(AppDbContext db, ILogger<CompanyController> logger, IManageFiles iManageFiles) : ControllerBase
     {
         private readonly ILogger<CompanyController> _logger = logger;
         private readonly AppDbContext _db = db;
-        private readonly IManageFiles _iManageFiles=iManageFiles;
-        
-   
+        private readonly IManageFiles _iManageFiles = iManageFiles;
+
+
         [HttpPost("register")]
         public async Task<ActionResult<string>> RegisterAsCompany(RegisterCompany company)
         {
@@ -42,9 +42,10 @@ namespace FinalProjectV02.Server.Controllers
                     await _db.Companies.AddAsync(companyToGetIntoTheDb);
                     await _db.SaveChangesAsync();
                     var token = GenerateJwtToken(companyToGetIntoTheDb.CompanyId);
-                    return Ok(new { Token = token,Company=companyToGetIntoTheDb });
+                    return Ok(new { Token = token, Company = companyToGetIntoTheDb });
                 }
-                return BadRequest("Company with this email already exists.");
+                ModelState.AddModelError("CompanyEmail", "Company with this email already exists.");
+                return BadRequest(ModelState);
 
             }
             return BadRequest(ModelState);
@@ -58,30 +59,25 @@ namespace FinalProjectV02.Server.Controllers
                 var companyFromDb = await _db.Companies.FirstOrDefaultAsync(c => c.CompanyEmail == login.LoginEmail);
                 if (companyFromDb == null)
                 {
-                    return BadRequest("Company Doesn't exist try registring");
+                    ModelState.AddModelError("LoginEmail", "Company Doesn't exist try registring");
+                    return BadRequest(ModelState);
                 }
                 PasswordHasher<LoginModel> hasher = new();
                 var result = hasher.VerifyHashedPassword(login, companyFromDb.CompanyPassword, login.LoginPassword);
                 if (result == 0)
                 {
-                    return BadRequest("Password is wrong");
+                    ModelState.AddModelError("LoginPassword", "Password is wrong");
+                    return BadRequest(ModelState);
                 }
                 var token = GenerateJwtToken(companyFromDb.CompanyId);
-                return Ok(new { Token = token,Company=companyFromDb });
+                return Ok(new { Token = token, Company = companyFromDb });
             }
             return BadRequest(ModelState);
-        }
-        [HttpPost("add/role")]
-        public async Task<ActionResult> ddaza([FromBody] Role role)
-        {
-            await _db.Roles.AddAsync(role);
-            await _db.SaveChangesAsync();
-            return Ok(role);
         }
         [HttpGet("all")]
         public async Task<ActionResult<IEnumerable<Company>>> GetAllCompanies()
         {
-            return await _db.Companies.ToListAsync();
+            return await _db.Companies.Include(c=>c.Projects).Include(c=>c.Users).ThenInclude(c=>c.Role).ToListAsync();
         }
         private string GenerateJwtToken(int userId)
         {

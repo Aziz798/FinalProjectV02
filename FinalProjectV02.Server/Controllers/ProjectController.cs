@@ -1,15 +1,19 @@
-﻿using FinalProjectV02.Server.Data;
+﻿
+using FinalProjectV02.Server.Data;
 using FinalProjectV02.Server.Models.Entities;
+using FinalProjectV02.Server.Repository.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Http;
 
 namespace FinalProjectV02.Server.Controllers;
 
 [Route("api/project")]
 [ApiController]
-public class ProjectController(AppDbContext db) : ControllerBase
+public class ProjectController(AppDbContext db, IProjectRepository projectRepository) : ControllerBase
 {
     private readonly AppDbContext _db = db;
+    private readonly IProjectRepository  _projectRepository = projectRepository;
 
     [HttpPost]
     public async Task<ActionResult<Project>> CreateProject([FromBody] Project project)
@@ -36,6 +40,11 @@ public class ProjectController(AppDbContext db) : ControllerBase
         }
         return NotFound();
     }
+    [HttpGet("company/{id}")]
+    public async Task<ActionResult<List<Project>>> OneCompanyProjects([FromHeader] int id)
+    {
+        return await _db.Projects.Where(p=>p.CompanyId == id).ToListAsync();
+    }
     //Get one Owner all projects
     [HttpGet("owner/{id}")]
     public async Task<ActionResult<IEnumerable<Project>>> GetOneOwnerAllProjects([FromHeader] int id)
@@ -56,7 +65,12 @@ public class ProjectController(AppDbContext db) : ControllerBase
 
         return Ok(); // Or any other appropriate response
     }
-   
+
+    [HttpGet("projects/all")]
+    public async Task<ActionResult<IEnumerable<Project>>> GetAllProjects()
+    {
+        return Ok(_projectRepository.GetAll());
+    }
 
 
 }

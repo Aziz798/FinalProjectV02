@@ -25,7 +25,7 @@ public class UserController : ControllerBase
     }
 
     [HttpPost("register")]
-    public async Task<ActionResult<string>> Registration(RegisterUser user)
+    public async Task<ActionResult<string>> Registration( RegisterUser user)
     {
         User registratedUser = new();
         if (ModelState.IsValid)
@@ -51,7 +51,8 @@ public class UserController : ControllerBase
             }
             else
             {
-                return BadRequest("User with this email already exists.");
+                ModelState.AddModelError("UserEmail", "User with this email already exists.");
+                return BadRequest(ModelState);
             }
         }
         else
@@ -60,14 +61,15 @@ public class UserController : ControllerBase
         }
     }
     [HttpPost("login")]
-    public async Task<ActionResult<string>> Login([FromForm] LoginModel loginUser)
+    public async Task<ActionResult<string>> Login([FromBody] LoginModel loginUser)
     {
         if (ModelState.IsValid)
         {
             var userFromDb = await _db.Users.FirstOrDefaultAsync(u => u.UserEmail == loginUser.LoginEmail);
             if (userFromDb == null)
             {
-                return BadRequest("User doesn't exist try Register");
+                ModelState.AddModelError("LoginEmail", "User doesn't exist try Register");
+                return BadRequest(ModelState);
             }
             else
             {
@@ -75,7 +77,8 @@ public class UserController : ControllerBase
                 var result = hasher.VerifyHashedPassword(loginUser, userFromDb.UserPassword, loginUser.LoginPassword);
                 if (result == 0)
                 {
-                    return BadRequest("Password is wrong");
+                    ModelState.AddModelError("LoginPassword", "Password is wrong");
+                    return BadRequest(ModelState);
                 }
                 var token = GenerateJwtToken(userFromDb.UserId);
                 return Ok(new { Token = token, User = userFromDb });
@@ -122,6 +125,14 @@ public class UserController : ControllerBase
         await _db.SaveChangesAsync();
         return Ok();
     }
+    [HttpPost("roles")]
+    public async Task<ActionResult<string>> Cre([FromBody]Role role)
+    {
+        await _db.Roles.AddAsync(role);
+        await _db.SaveChangesAsync();
+        return Ok(role);
+
+    }
     [HttpGet("roles")]
     public async Task<ActionResult<IEnumerable<Role>>> GetAllRoles()
     {
@@ -130,7 +141,7 @@ public class UserController : ControllerBase
     [HttpGet("{id}")]
     public async Task<ActionResult<User>> GetOneUser( int id)
     {
-        User user= await _db.Users.Include(u=>u.Company).FirstOrDefaultAsync(u=>u.UserId == id);
+        User user= await _db.Users.Include(u => u.Company).Include(u=>u.UserInprojects).ThenInclude(p=>p.Project).FirstOrDefaultAsync(u=>u.UserId == id);
         return Ok(user);
     }
 

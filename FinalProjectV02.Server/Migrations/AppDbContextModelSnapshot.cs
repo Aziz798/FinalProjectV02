@@ -50,7 +50,7 @@ namespace FinalProjectV02.Server.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime>("CraeatedAt")
+                    b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
                     b.Property<DateTime>("UpdatedAt")
@@ -76,13 +76,10 @@ namespace FinalProjectV02.Server.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("ProjectId")
+                    b.Property<int?>("ProjectId")
                         .HasColumnType("int");
 
                     b.Property<int?>("UserId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("UserMessageId")
                         .HasColumnType("int");
 
                     b.HasKey("MessageId");
@@ -179,16 +176,13 @@ namespace FinalProjectV02.Server.Migrations
                     b.Property<DateTime>("EndDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("ProjectId")
+                    b.Property<int?>("ProjectId")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("StartDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("StatusId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("TacheUserId")
+                    b.Property<int?>("StatusId")
                         .HasColumnType("int");
 
                     b.Property<string>("TaskDescription")
@@ -220,7 +214,7 @@ namespace FinalProjectV02.Server.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("UserId"));
 
-                    b.Property<int>("CompanyId")
+                    b.Property<int?>("CompanyId")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedAt")
@@ -234,7 +228,7 @@ namespace FinalProjectV02.Server.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("RoleId")
+                    b.Property<int?>("RoleId")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("UpdatedAt")
@@ -269,7 +263,7 @@ namespace FinalProjectV02.Server.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("UsersInProjectId"));
 
-                    b.Property<int>("ProjectId")
+                    b.Property<int?>("ProjectId")
                         .HasColumnType("int");
 
                     b.Property<int?>("UserId")
@@ -278,9 +272,6 @@ namespace FinalProjectV02.Server.Migrations
                     b.Property<string>("UserStatus")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("UsersInProjectUserId")
-                        .HasColumnType("int");
 
                     b.HasKey("UsersInProjectId");
 
@@ -295,9 +286,7 @@ namespace FinalProjectV02.Server.Migrations
                 {
                     b.HasOne("FinalProjectV02.Server.Models.Entities.Project", "Project")
                         .WithMany("Messages")
-                        .HasForeignKey("ProjectId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("ProjectId");
 
                     b.HasOne("FinalProjectV02.Server.Models.Entities.User", "User")
                         .WithMany("Messages")
@@ -315,7 +304,7 @@ namespace FinalProjectV02.Server.Migrations
                         .HasForeignKey("CompanyId");
 
                     b.HasOne("FinalProjectV02.Server.Models.Entities.User", "Owner")
-                        .WithOne("Projects")
+                        .WithOne("Project")
                         .HasForeignKey("FinalProjectV02.Server.Models.Entities.Project", "OwnerId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -329,15 +318,11 @@ namespace FinalProjectV02.Server.Migrations
                 {
                     b.HasOne("FinalProjectV02.Server.Models.Entities.Project", "Project")
                         .WithMany("Taches")
-                        .HasForeignKey("ProjectId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("ProjectId");
 
                     b.HasOne("FinalProjectV02.Server.Models.Entities.Status", "Status")
                         .WithMany("Taches")
-                        .HasForeignKey("StatusId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("StatusId");
 
                     b.HasOne("FinalProjectV02.Server.Models.Entities.User", "User")
                         .WithMany("Taches")
@@ -354,15 +339,11 @@ namespace FinalProjectV02.Server.Migrations
                 {
                     b.HasOne("FinalProjectV02.Server.Models.Entities.Company", "Company")
                         .WithMany("Users")
-                        .HasForeignKey("CompanyId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("CompanyId");
 
                     b.HasOne("FinalProjectV02.Server.Models.Entities.Role", "Role")
                         .WithMany("Users")
-                        .HasForeignKey("RoleId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("RoleId");
 
                     b.Navigation("Company");
 
@@ -373,9 +354,7 @@ namespace FinalProjectV02.Server.Migrations
                 {
                     b.HasOne("FinalProjectV02.Server.Models.Entities.Project", "Project")
                         .WithMany("UsersInProjects")
-                        .HasForeignKey("ProjectId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("ProjectId");
 
                     b.HasOne("FinalProjectV02.Server.Models.Entities.User", "User")
                         .WithMany("UserInprojects")
@@ -416,7 +395,7 @@ namespace FinalProjectV02.Server.Migrations
                 {
                     b.Navigation("Messages");
 
-                    b.Navigation("Projects");
+                    b.Navigation("Project");
 
                     b.Navigation("Taches");
 

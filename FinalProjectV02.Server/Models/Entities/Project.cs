@@ -1,36 +1,36 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
-namespace FinalProjectV02.Server.Models.Entities;
-
-public class Project
-
+namespace FinalProjectV02.Server.Models.Entities
 {
-    [Key]
-    public int ProjectId { get; set; }
+    public class Project
+    {
+        [Key]
+        public int ProjectId { get; set; }
+        [ForeignKey(nameof(Owner))]
+        public int OwnerId { get; set; }
+        [Required(ErrorMessage = "Company is required")]
+        public int CompanyId { get; set; }
 
-    [Required]
+        [Required]
+        [MinLength(10, ErrorMessage = "Project Description must be at least 10 characters")]
+        public string ProjectDescription { get; set; }
 
-    public int OwnerId { get; set; }
+        [Required]
+        public TimeSpan ProjectDuration { get; set; }
 
-    [Required]
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow; // Use UTC for consistent timestamps
 
-    [MinLength(10, ErrorMessage = "Project Description must be at least 10 characters")]
+        public DateTime UpdatedAt { get; set; } = DateTime.UtcNow; // Use UTC for consistent timestamps
 
-    public string ProjectDescription { get; set; }
+        // Navigation Properties (Foreign Keys)
+        public Company? Company { get; set; }
+        public User? Owner { get; set; }
 
-    [Required]
-    public TimeSpan ProjectDuration { get; set; }
-
-    public DateTime CreatedAt { get; set; } = DateTime.Now;
-
-    public DateTime UpdatedAt { get; set; } = DateTime.Now;
-    public List<Message> Messages { get; set; } = new List<Message>();
-    public List<Tache> Taches { get; set; } = new List<Tache>();
-    public List<UsersInProject> UsersInProjects { get; set; } = new List<UsersInProject>();
-    public Company? Company { get; set; }
-    public User? Owner { get; set; }
-
-
-
+        // Many-to-Many Relationships (if applicable)
+        public List<Message> Messages { get; set; } = new();// Consider using ICollection for efficiency
+        public List<Tache> Taches { get; set; } = new(); // Consider using ICollection for efficiency
+        public List<UsersInProject> UsersInProjects { get; set; } = new(); // Consider using ICollection for efficiency
+    }
 }
-

@@ -1,5 +1,7 @@
 // Added using statements
 using FinalProjectV02.Server.Data;
+using FinalProjectV02.Server.Repository;
+using FinalProjectV02.Server.Repository.Interfaces;
 using FinalProjectV02.Server.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
@@ -30,7 +32,7 @@ builder.Services.AddCors(options =>
         }
     );
 });
-
+builder.Services.AddScoped<IProjectRepository, ProjectRepository>();
 // Configure JWT authentication
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>

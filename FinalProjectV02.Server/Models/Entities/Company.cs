@@ -31,7 +31,7 @@ public class Company
     [Compare("CompanyPassword", ErrorMessage = "Confirm Password Must match Password ")]
     [DataType(DataType.Password)]
     public string CompanyConfirmPassword { get; set; }
-    public DateTime CraeatedAt { get; set; } = DateTime.Now;
+    public DateTime CreatedAt { get; set; } = DateTime.Now;
     public DateTime UpdatedAt { get; set; } = DateTime.Now;
     public List<User> Users { get; set; } = new();
     public List<Project> Projects { get; set; } = new();
