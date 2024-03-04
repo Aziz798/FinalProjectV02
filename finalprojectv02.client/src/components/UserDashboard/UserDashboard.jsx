@@ -9,7 +9,7 @@ import LandingPage from "./LandingPage";
 import axios from "axios";
 import { Skeleton } from "@mui/material";
 import { FaUser } from "react-icons/fa";
-
+import { useNavigate } from "react-router-dom";
 const UserDashboard = ({ setColor }) => {
     const changeTheme = (color) => {
         setColor(color);
@@ -27,6 +27,11 @@ const UserDashboard = ({ setColor }) => {
         }
         getUser();
     }, [])
+    const nav = useNavigate();
+    const logout = ()=>{
+        localStorage.clear();
+        nav("/")
+    }
     return (
         <>
             {!user ? (<Skeleton />) : (<div className="drawer lg:drawer-open">
@@ -92,7 +97,7 @@ const UserDashboard = ({ setColor }) => {
                         <li className="text-primary text-xl"><Link to={`/projects/user/${localStorage.getItem("userId")}`}><MdOutlineWork />My projects</Link></li>
                         <li className="text-primary text-xl"><Link to={`/tasks/user/${localStorage.getItem("userId")}`}><GrTasks />My Tasks</Link></li>
                         <li className="text-primary text-xl"><Link to={`/messages/user/${localStorage.getItem("userId")}`}><MdMessage />Chat room</Link></li>
-                        <li className="text-error text-xl"><Link to={`/messages/user/${localStorage.getItem("userId")}`}><HiOutlineLogout />Logout</Link></li>
+                        <li className="text-error text-xl"><button onClick={()=>logout()} ><HiOutlineLogout />Logout</button></li>
 
                     </ul>
 

@@ -9,6 +9,7 @@ import PreLogRegDashboard from "./views/PreLogRegDashboard";
 import NotFoundPage from "./views/NotFoundPage";
 import ShowAllProjects from "./components/Projects/ShowAllProjects";
 import ComapnyDahsboard from "./components/CompanyDahsboard/ComapnyDahsboard";
+import CreateProject from "./components/Projects/CreateProject";
 
 export default function App() {
     const [color, setColor] = useState("dark");
@@ -28,6 +29,7 @@ export default function App() {
                 <Route path="/user/dashboard" element={<UserDashboard setColor={setColor} />} />
                 <Route path="/projects/user/:id" element={<ShowAllProjects setColor={setColor}/>}/>
                 <Route path="/company/dashboard" element={<ComapnyDahsboard setColor={setColor}/>}/>
+                <Route path="/projects/company/:id" element={<CreateProject/>}/>
             </Routes>
         </div>
     );

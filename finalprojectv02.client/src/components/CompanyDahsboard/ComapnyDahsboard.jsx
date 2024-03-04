@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { AiOutlineMenu } from "react-icons/ai";
 import { MdOutlineWork } from "react-icons/md";
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { GrTasks } from "react-icons/gr";
 import { MdMessage } from "react-icons/md";
 import { HiOutlineLogout } from "react-icons/hi";
@@ -14,6 +14,11 @@ const ComapnyDahsboard = ({setColor}) => {
     const changeTheme = (color) => {
         setColor(color);
     };
+    const nav = useNavigate();
+    const logout = ()=>{
+        localStorage.clear();
+        nav("/")
+    }
  
     return (
         <div className="drawer lg:drawer-open">
@@ -67,8 +72,8 @@ const ComapnyDahsboard = ({setColor}) => {
                             <option value="sunset">sunset</option>
                         </select>
                     </li>
-                    <li className="text-primary text-xl"><Link to={`/projects/company/${localStorage.getItem("companyId")}`}><MdOutlineWork />My projects</Link></li>
-                    <li className="text-error text-xl"><Link to={`/`}><HiOutlineLogout />Logout</Link></li>
+                    <li className="text-primary text-xl"><Link to={`/projects/company/${localStorage.getItem("companyId")}`}><MdOutlineWork />Create project</Link></li>
+                    <li className="text-error text-xl"><button onClick={()=>logout()} ><HiOutlineLogout />Logout</button></li>
 
                 </ul>
 
