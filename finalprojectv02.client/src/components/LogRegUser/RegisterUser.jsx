@@ -14,6 +14,7 @@ const RegisterUser = ({ setToken }) => {
         CompanyId: null,
         RoleId: null,
     });
+    console.log(registerUser);
     const [validationErrors, setValidationErrors] = useState(null);
 
     const [roles, setRoles] = useState(null);
@@ -63,7 +64,7 @@ const RegisterUser = ({ setToken }) => {
 
             const response = await axios.post("http://localhost:5292/api/user/register", formData);
             localStorage.setItem("userId", response.data.user.userId);
-            localStorage.setItem("Token", response.data.token);
+            localStorage.setItem("token", response.data.token);
             setToken("user");
             setRegisterUser({
                 FirstName: "",
@@ -90,10 +91,11 @@ const RegisterUser = ({ setToken }) => {
         <div className="space-y-4">
             <form onSubmit={formHandler} className="flex flex-col space-y-4 items-center">
                 <h1 className="text-3xl">Regiter as Employee</h1>
-                {validationErrors && (validationErrors.FirstName && (
-                    validationErrors.FirstName.map((err, key) => <li key={key} className="text-red-800">{err}</li>)
-                ))}
+                <div className="flex gap-5">
                 <label className="input input-bordered flex items-center gap-2">
+                    {validationErrors && (validationErrors.FirstName && (
+                        validationErrors.FirstName.map((err, key) => <li key={key} className="text-red-800">{err}</li>)
+                        ))}
                     <input
                         type="text"
                         name="FirstName"
@@ -102,89 +104,101 @@ const RegisterUser = ({ setToken }) => {
                         placeholder="First Name"
                     />
                 </label>
+                <label className="input input-bordered flex items-center gap-2">
                 {validationErrors && (validationErrors.LastName && (
                     validationErrors.LastName.map((err, key) => <li key={key} className="text-red-800">{err}</li>)
-                ))}
-                <label className="input input-bordered flex items-center gap-2">
+                    ))}
                     <input
                         type="text"
                         name="LastName"
                         value={registerUser.LastName}
                         onChange={handleChange}
                         placeholder="Last Name"
-                    />
+                        />
                 </label>
+                </div>
+                <label className="input input-bordered flex items-center gap-2 w-full">
                 {validationErrors && validationErrors.UserEmail && (
                     validationErrors.UserEmail.map((err, key) => <li key={key} className="text-red-800">{err}</li>)
-                )}
-                <label className="input input-bordered flex items-center gap-2">
+                    )}
                     <input
                         type="text"
                         name="UserEmail"
                         value={registerUser.UserEmail}
                         onChange={handleChange}
                         placeholder="Email"
-                    />
+                        />
                 </label>
-                {validationErrors && validationErrors.CompanyId && (
-                    validationErrors.CompanyId.map((err, key) => <li key={key} className="text-red-800">{err}</li>)
-                )}
-                <label className="input input-bordered flex items-center gap-2">
+                    <div className="flex gap-4 ">
+
+                        <div className="flex flex-col">
+                        {validationErrors && validationErrors.CompanyId && (
+                            validationErrors.CompanyId.map((err, key) => <li key={key} className="text-red-800">{err}</li>)
+                            )}
+                {/* <label className="input input-bordered flex items-center gap-2"> */}
                     <select name="CompanyId" value={registerUser.CompanyId} onChange={handleChange} className="select select-bordered w-full max-w-xs">
                         <option disabled selected>Company that you work for</option>
                         {companies && companies.map(com => {
                             return <option key={com.companyId} value={com.companyId}>{com.companyName}</option>
                         })}
                     </select>
-                </label>
+                {/* </label> */}
+                        </div>
+                        <div className="flex flex-col">
                 {validationErrors && (validationErrors.RoleId && (
                     validationErrors.RoleId.map((err, key) => <li key={key} className="text-red-800">{err}</li>)
-                ))}
-                <label className="input input-bordered flex items-center gap-2">
+                    ))}
+                {/* <label className="input input-bordered flex items-center gap-2"> */}
                     <select name="RoleId" value={registerUser.RoleId} onChange={handleChange} className="select select-bordered w-full max-w-xs">
                         <option disabled selected>Your role in the company</option>
                         {roles && roles.map(role => {
                             return <option key={role.RoleId} value={role.roleId}>{role.roleName}</option>
                         })}
                     </select>
-                </label>
+                {/* </label> */}
+                        </div>
+                        </div>
+                <label className="form-control w-full max-w-xs">
+                    <div className="text-center mt-6">
+                        <h2 className="text-3xl ">Pick a photo</h2>
+                    </div>
                 {validationErrors && (validationErrors.UserPhoto && (
                     validationErrors.UserPhoto.map((err, key) => <li key={key} className="text-red-800">{err}</li>)
-                ))}
-                <label className="form-control w-full max-w-xs">
-                    <div className="label">
-                        <span className="label-text">Pick a photo</span>
-                    </div>
+                    ))}
                     <input
                         type="file"
                         onChange={handleFileChange}
-                        className="file-input file-input-bordered w-full max-w-xs"
-                    />
+                        className="file-input file-input-bordered w-full max-w-xs mt-5"
+                        />
                 </label>
+                <div className="flex gap-2">
+                <label className="input input-bordered flex items-center gap-2">
+
                 {validationErrors && (validationErrors.UserPassword && (
                     validationErrors.UserPassword.map((err, key) => <li key={key} className="text-red-800">{err}</li>)
-                ))}
-                <label className="input input-bordered flex items-center gap-2">
+                    ))}
                     <input
                         type="password"
                         name="UserPassword"
                         value={registerUser.UserPassword}
                         onChange={handleChange}
                         placeholder="Enter password here"
-                    />
+                        />
                 </label>
+                <label className="input input-bordered flex items-center gap-2">
                 {validationErrors && (validationErrors.ConfirmPassword && (
                     validationErrors.ConfirmPassword.map((err, key) => <li key={key} className="text-red-800">{err}</li>)
-                ))}
-                <label className="input input-bordered flex items-center gap-2">
+                    ))}
                     <input
                         type="password"
                         name="ConfirmPassword"
                         value={registerUser.ConfirmPassword}
                         onChange={handleChange}
                         placeholder="Confirm Password"
-                    />
+                        />
                 </label>
+                        
+                        </div>
                 <button type="submit" className="btn btn-primary">
                     Register
                 </button>
@@ -194,3 +208,6 @@ const RegisterUser = ({ setToken }) => {
 }
 
 export default RegisterUser
+
+
+

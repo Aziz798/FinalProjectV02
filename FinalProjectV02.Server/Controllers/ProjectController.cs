@@ -16,7 +16,7 @@ public class ProjectController(AppDbContext db, IProjectRepository projectReposi
     private readonly IProjectRepository  _projectRepository = projectRepository;
 
     [HttpPost]
-    public async Task<ActionResult<Project>> CreateProject([FromBody] Project project)
+    public async Task<ActionResult<Project>> CreateProject(Project project)
     {
         if (project == null)
         {
@@ -43,7 +43,7 @@ public class ProjectController(AppDbContext db, IProjectRepository projectReposi
     [HttpGet("company/{id}")]
     public async Task<ActionResult<List<Project>>> OneCompanyProjects([FromHeader] int id)
     {
-        return await _db.Projects.Where(p=>p.CompanyId == id).ToListAsync();
+        return await _db.Projects.ToListAsync();
     }
     //Get one Owner all projects
     [HttpGet("owner/{id}")]

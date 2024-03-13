@@ -1,46 +1,86 @@
 import axios from "axios";
-import { useEffect, useState } from "react"
+import { useEffect, useState } from "react";
 
 const ProjectscCompany = () => {
-    const [company,setCompany]=useState(null);
-    const [employees,setEmployess]=useState(null);
-    StaticRange
-    useEffect(()=>{
-        async function getCompany(){
+    const [company, setCompany] = useState(null);
+    const [employees, setEmployess] = useState(null);
+    const [roles, setRoles] = useState(null); // State to store roles
+console.log(company);
+    useEffect(() => {
+        async function fetchData() {
             try {
-                const res = await axios.get("http://localhost:5292/api/project/company/"+localStorage.getItem("companyId"));
-                const res2 = await axios.get("http://localhost:5292/api/company/employees/"+localStorage.getItem("companyId"))
-                setCompany(res.data.$values)
-                setEmployess(res2.data.$values);
+                const companyRes = await axios.get("http://localhost:5292/api/project/company/" + localStorage.getItem("companyId"));
+                const employeesRes = await axios.get("http://localhost:5292/api/company/employees/" + localStorage.getItem("companyId"));
+                const rolesRes = await axios.get("http://localhost:5292/api/company/employees/");
+                setCompany(companyRes.data.$values);
+                setEmployess(employeesRes.data.$values);
+                setRoles(rolesRes.data.$values);
             } catch (error) {
                 console.log(error);
             }
         }
-        getCompany()
-    },[])
+
+        fetchData();
+    }, []);
+    const addRoleNameToEmployees = (users, roles) => {
+        if (!users || !roles) return users;
+
+        const rolesMap = new Map(roles.map(role => [role.roleId, role.roleName]));
+
+        return users.map(user => ({
+            ...user,
+            roleName: rolesMap.get(user.roleId)
+        }));
+    };
+
+    const employeesWithRoleNames = addRoleNameToEmployees(employees, roles);
+
     return (
-        <div className="stats shadow">
+        
+        <div className="flex gap-36">
+            <div >
+                <h1 className="text-center text-lg font-black">Employees</h1>
+                <table className="table table-zebra">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Job</th>
 
-            <div className="stat place-items-center">
-                <div className="stat-title">Projects</div>
-                <div className="stat-value">{company && company.length}</div>
-                <div className="stat-desc">From January 1st to February 1st</div>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {employeesWithRoleNames && employeesWithRoleNames.map(e => (
+                            <tr key={e.userId}>
+                                <td>{e.firstName}</td>
+                                <td>{e.roleName}</td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
             </div>
-
-            <div className="stat place-items-center">
-                <div className="stat-title">Employees</div>
-                <div className="stat-value text-secondary">{employees && employees.length}</div>
-                <div className="stat-desc text-secondary">Employees working on the company</div>
+            <div className="overflow-x-auto">
+                <h1 className="text-center text-lg font-black">Projects</h1>
+                <table className="table table-zebra">
+                    <thead>
+                        <tr>
+                            <th>Description</th>
+                            <th>Progress</th>
+                            
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {company && company.map(e => (
+                            <tr key={e.userId}>
+                                <td>{e.projectDescription}</td>
+                                <td><div className="radial-progress" style={{"--value":20}} role="progressbar">20%</div></td>
+                                <td><button className="btn btn-error">Delete Project</button></td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
             </div>
-
-            <div className="stat place-items-center">
-                <div className="stat-title">New Registers</div>
-                <div className="stat-value">1,200</div>
-                <div className="stat-desc">↘︎ 90 (14%)</div>
-            </div>
-
         </div>
-    )
-}
+    );
+};
 
-export default ProjectscCompany
+export default ProjectscCompany;

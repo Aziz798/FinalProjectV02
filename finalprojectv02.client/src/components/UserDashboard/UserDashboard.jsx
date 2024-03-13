@@ -10,6 +10,7 @@ import axios from "axios";
 import { Skeleton } from "@mui/material";
 import { FaUser } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
+import img from "../../../public/hkhkhljhl.jpg"
 const UserDashboard = ({ setColor }) => {
     const changeTheme = (color) => {
         setColor(color);
@@ -49,7 +50,7 @@ const UserDashboard = ({ setColor }) => {
                         <li className="text-primary text-2xl">
                             <div className="avatar">
                                 <div className="w-24 rounded-full ring ring-primary ring-offset-base-100 ring-offset-2">
-                                <img src={`../../../../FinalProjectV02.Server/Uploads/StaticContent/${user.userPhoto}`} alt={user.firstName}  />
+                                <img src={img} alt={user.firstName}  />
 
                                 </div>
                             </div>
@@ -96,7 +97,7 @@ const UserDashboard = ({ setColor }) => {
                         <li className="text-primary text-xl"><Link to={"/user/dashboard"}><FaUser />HomePage</Link></li>
                         <li className="text-primary text-xl"><Link to={`/projects/user/${localStorage.getItem("userId")}`}><MdOutlineWork />My projects</Link></li>
                         <li className="text-primary text-xl"><Link to={`/tasks/user/${localStorage.getItem("userId")}`}><GrTasks />My Tasks</Link></li>
-                        <li className="text-primary text-xl"><Link to={`/messages/user/${localStorage.getItem("userId")}`}><MdMessage />Chat room</Link></li>
+                        <li className="text-primary text-xl"><Link to={"http://localhost:3000/react-rtc-demo"}><MdMessage />Chat room</Link></li>
                         <li className="text-error text-xl"><button onClick={()=>logout()} ><HiOutlineLogout />Logout</button></li>
 
                     </ul>

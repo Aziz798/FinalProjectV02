@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { useState } from "react";
-
+import im from "../../assets/rae3.png"
 const PreLogRegNav = ({ setColor }) => {
     const changeTheme = (color) => {
         setColor(color);
@@ -8,8 +8,13 @@ const PreLogRegNav = ({ setColor }) => {
 
     return (
         <div className="flex justify-between items-center h-24 max-w-[1240px] mx-auto px-4 text-white">
-            <a href="http://localhost:3000/react-rtc-demo"> achref</a>
-            <h1 className="w-full text-3xl font-bold text-accent">RAE.</h1>
+            
+            <div className="avatar right-24">
+                <div className=" rounded-full ring ring-primary ring-offset-base-100 ring-offset-2 h-12">
+                    <img src={im} />
+                </div>
+            </div>
+
             <ul className="hidden md:flex items-center text-base-content">
                 <li className="p-4"><Link to={"/"}>Home</Link></li>
                 <li className="p-4"><Link to={"/register/login/user"}>Employee</Link></li>
@@ -17,11 +22,11 @@ const PreLogRegNav = ({ setColor }) => {
                 <li className="p-4">About</li>
                 <li className="p-4">Contact</li>
                 <li>
-                    <select  className="select select-bordered w-15 max-w-xl" onChange={(event) => changeTheme(event.target.value)}>
-                        <option  disabled selected>Choose theme</option>
+                    <select className="select select-bordered w-15 max-w-xl" onChange={(event) => changeTheme(event.target.value)}>
+                        <option disabled selected>Choose theme</option>
                         <option value="dark">dark</option>
-                        <option  value="light">light</option>
-                        <option  value="cupcake">cupcake</option>
+                        <option value="light">light</option>
+                        <option value="cupcake">cupcake</option>
                         <option value="bumblebee">bumblebee</option>
                         <option value="emerald">emerald</option>
                         <option value="corporate">corporate</option>

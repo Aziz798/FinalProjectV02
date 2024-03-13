@@ -4,7 +4,7 @@ import Projects from "./Projects";
 import { Skeleton } from "@mui/material";
 import { AiOutlineMenu } from "react-icons/ai";
 import { MdOutlineWork } from "react-icons/md";
-import { Link, useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import { GrTasks } from "react-icons/gr";
 import { MdMessage } from "react-icons/md";
 import { HiOutlineLogout } from "react-icons/hi";
@@ -12,6 +12,7 @@ import { FaUser } from "react-icons/fa";
 
 
 const ShowAllProjects = ({setColor}) => {
+    const nav=useNavigate()
     const {id} =useParams();
         const changeTheme = (color) => {
             setColor(color);
@@ -29,6 +30,10 @@ const ShowAllProjects = ({setColor}) => {
             }
             getUser();
         }, [])
+        const logout = ()=>{
+            localStorage.clear();
+            nav("/")
+        }
         return (
             <>
                 {!user ? (<Skeleton />) : (<div className="drawer lg:drawer-open">
@@ -94,7 +99,7 @@ const ShowAllProjects = ({setColor}) => {
                             <li className="text-primary text-xl"><Link to={`/projects/user/${localStorage.getItem("userId")}`}><MdOutlineWork />My projects</Link></li>
                             <li className="text-primary text-xl"><Link to={`/tasks/user/${localStorage.getItem("userId")}`}><GrTasks />My Tasks</Link></li>
                             <li className="text-primary text-xl"><Link to={`/messages/user/${localStorage.getItem("userId")}`}><MdMessage />Chat room</Link></li>
-                            <li className="text-error text-xl"><Link to={`/messages/user/${localStorage.getItem("userId")}`}><HiOutlineLogout />Logout</Link></li>
+                            <li className="text-error text-xl"><button onClick={()=>logout()} ><HiOutlineLogout />Logout</button></li>
     
                         </ul>
     

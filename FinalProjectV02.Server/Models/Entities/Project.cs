@@ -18,7 +18,7 @@ namespace FinalProjectV02.Server.Models.Entities
         public string ProjectDescription { get; set; }
 
         [Required]
-        public TimeSpan ProjectDuration { get; set; }
+        public DateTime ProjectDuration { get; set; }
 
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow; // Use UTC for consistent timestamps
 

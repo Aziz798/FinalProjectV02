@@ -1,61 +1,46 @@
-import axios from 'axios';
-import { useEffect, useState } from 'react'
+import React, { useState } from 'react'
+// import { toast } from 'react-toastify';
 import toast from 'react-hot-toast';
+import { v4 as uuidv4 } from 'uuid';  //to generate the id
 
 
-
-
-const CreateTask = ({ projectId }) => {
+const CreateTask = ({tasks, setTasks}) => {
     const [task, setTask] = useState({
-        TaskDescription: "",
-        StatusId: 1,  //can be in progress or closed
-        ProjectId: projectId,
-        TacheUserId: localStorage.getItem("userId"),
-        StartDate: undefined,
-        EndDate:undefined,
-    });
-    
+        id:"",
+        name:"",
+        status:"todo"   //can be in progress or closed
+    })
+    console.log(task)
 
-
-    const handleSubmit = async (e) => {
+    const handleSubmit = (e) =>
+    {
         e.preventDefault();
-        try {
-            
-            const response = await axios.post("http://localhost:5292/api/tache", task);
-            console.log(response)
+        if(task.name.length <3) return toast.error("🙅‍♀️ A task must have more than 3 characters 🙅‍♀️.")
+        if(task.name.length <5) return toast.error("🙅‍♀️ A task must not be more than 5 characters 🙅‍♀️.")
+        setTasks((pre)=>{
+            const list = [...tasks, task] //on a changé tasks par pre
+            localStorage.setItem("tasks", JSON.stringify(list))
+            return list
+        })
 
-        } catch (error) {
-            Object.entries(error.response.data.errors).forEach(function([_,validationError]){
-            for(let i =0;i<=validationError.length;i++){
-                if(validationError[i]!==undefined && isNaN(validationError[i])){
-                    toast.error(validationError[i])
-                }
-            }
-            })
-        }
+        toast.success("🎊 Task Created 🎊")
+
+        setTask({
+            id:"",
+            name:"",
+            status:"todo"
+        })
     }
-    return (
-        <form onSubmit={handleSubmit} className='flex flex-row gap-3'>
-            <input type="text"
-                className='input input-bordered input-primary w-full max-w-xs'
-                placeholder='Task Description'
-                onChange={(e) => setTask({ ...task, TaskDescription: e.target.value })}
-                value={task.TaskDescription}
-            />
-            <input type="date"
-                className='input input-bordered input-primary w-full max-w-xs'
-                onChange={(e) => setTask({ ...task, StartDate: e.target.value })}
-                value={task.StartDate}
-            />
-            <input type="date"
-                className='input input-bordered input-primary w-full max-w-xs'
-                onChange={(e) => setTask({ ...task, EndDate: e.target.value })}
-                value={task.EndDate}
-            />
-
-            <button className='btn btn-outline btn-accent'>Create</button>
-        </form>
-    )
+  return (
+    <form onSubmit={handleSubmit}>
+        <input type="text"
+        className='border-2 border-slate-400 bg-slate-100 rounded-md mr-4 h-12 w-64 px-1' 
+        onChange={(e)=>setTask({...task, id:uuidv4(), name:e.target.value})}
+        value={task.name}
+        />
+        <button className='bg-black rounded-md px-4 h-12 text-primary'>Create</button>
+    </form>
+  )
 }
 
 export default CreateTask

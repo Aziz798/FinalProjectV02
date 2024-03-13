@@ -30,7 +30,7 @@ const LoginUser = ({ setToken }) => {
             setValidationErrors(null);
             setToken("user");
             nav("/user/dashboard")
-        } catch (error) {f
+        } catch (error) {
             if (error.response.data.errors) {
                 setValidationErrors(error.response.data.errors);
                 

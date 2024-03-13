@@ -12,8 +12,8 @@ const LandingPage = () => {
             </div>
             <div className="card w-96 bg-neutral text-neutral-content">
                 <div className="card-body items-center text-center">
-                    <h2 className="card-title">Projects</h2>
-                    <p>You have 5 projects on going</p>
+                    <h2 className="card-title">Scrum master</h2>
+                    <p>You have 1 projects on going</p>
                 </div>
             </div>
         </div>

@@ -95,7 +95,7 @@ namespace FinalProjectV02.Server.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     OwnerId = table.Column<int>(type: "int", nullable: false),
                     ProjectDescription = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    ProjectDuration = table.Column<TimeSpan>(type: "time", nullable: false),
+                    ProjectDuration = table.Column<DateTime>(type: "datetime2", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     CompanyId = table.Column<int>(type: "int", nullable: true)

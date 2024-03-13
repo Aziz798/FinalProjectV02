@@ -82,8 +82,14 @@ namespace FinalProjectV02.Server.Controllers
         [HttpGet("employees/{id}")]
         public async Task<ActionResult<IEnumerable<User>>> Employees(int id)
         {
-            return await _db.Users.Where(u=>u.CompanyId== id).ToListAsync();   
+            return await _db.Users.Where(u=>u.CompanyId==id).ToListAsync();   
         }
+        [HttpGet("employees")]
+        public async Task<ActionResult<IEnumerable<Role>>> Employiees(int id)
+        {
+            return await _db.Roles.ToListAsync();
+        }
+
         private string GenerateJwtToken(int userId)
         {
             var tokenHandler = new JwtSecurityTokenHandler();

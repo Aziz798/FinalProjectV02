@@ -112,8 +112,8 @@ namespace FinalProjectV02.Server.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<TimeSpan>("ProjectDuration")
-                        .HasColumnType("time");
+                    b.Property<DateTime>("ProjectDuration")
+                        .HasColumnType("datetime2");
 
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime2");
